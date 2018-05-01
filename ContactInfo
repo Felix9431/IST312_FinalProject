@@ -1,0 +1,95 @@
+package com.example.IST312_Final;
+
+public class ContactInfo 
+{
+	private String firstName;
+	private String lastName;
+	private String email;
+	private String phone;
+	private String info;
+	private String salukiSpam;
+	private String programInfo;
+	private String termInfo;
+	
+	public ContactInfo()
+	{
+		
+	}
+
+	public ContactInfo(String firstName, String lastName, String email, String phone, String info, String salukiSpam, String programInfo, String termInfo)
+	{
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.phone = phone;
+		this.info = info;
+		this.salukiSpam = salukiSpam;
+		this.programInfo = programInfo;
+		this.termInfo = termInfo;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
+	public String getSalukiSpam() {
+		return salukiSpam;
+	}
+
+	public void setSalukiSpam(String salukiSpam) {
+		this.salukiSpam = salukiSpam;
+	}
+
+	public String getProgramInfo() {
+		return programInfo;
+	}
+
+	public void setProgramInfo(String programInfo) {
+		this.programInfo = programInfo;
+	}
+
+	public String getTermInfo() {
+		return termInfo;
+	}
+
+	public void setTermInfo(String termInfo) {
+		this.termInfo = termInfo;
+	}
+}
+	
