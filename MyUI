@@ -1,0 +1,211 @@
+/*
+ * Need input validation
+ * Need automated email and text-responses
+ * Need JavaDoc
+ * Need a printout of the number of submitted forms with the relevant details
+ */
+package com.example.IST312_Final;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.annotation.WebServlet;
+
+import com.vaadin.annotations.Theme;
+import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
+import com.vaadin.data.Validator;
+import com.vaadin.data.validator.EmailValidator;
+import com.vaadin.data.validator.RegexpValidator;
+import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinServlet;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+
+/**
+ * This UI is the application entry point. A UI may either represent a browser window 
+ * (or tab) or some part of an HTML page where a Vaadin application is embedded.
+ * <p>
+ * The UI is initialized using {@link #init(VaadinRequest)}. This method is intended to be 
+ * overridden to add component to the user interface and initialize non-component functionality.
+ */
+@Theme("mytheme")
+
+public class MyUI extends UI {
+
+	@Override
+	protected void init(VaadinRequest vaadinRequest) {
+		
+		String firstName = "First Name";
+		String descriptionText = "Please fill out this field.";
+		String lastName = "Last Name";
+		String email = "Email";
+		String phone = "Phone";
+		String infoLabelText = "Provide us with any further information you think may be important";
+		String program = "Program";
+		String program1 = "Information Systems Technologies Online Program";
+		String program2 = "Information Systems Technologies On-Campus Program";
+		String term = "Term";
+		String term1 = "Summer 2018";
+		String term2 = "Fall 2018";
+		String term3 = "Spring 2019";
+		String salukiSpam = "Type S@luki - This is to prevent spam";
+		String programDesc = "Choose a program";
+		String termDesc = "Choose a term";
+		
+		final VerticalLayout layout = new VerticalLayout();
+
+		TextField firstNameText = new TextField(firstName);
+		TextField lastNameText = new TextField(lastName);
+		TextField emailText = new TextField(email);
+		TextField phoneText = new TextField(phone);
+		Label infoLabel = new Label(infoLabelText);
+		TextField infoText = new TextField();
+		TextField salukiSpamText = new TextField(salukiSpam);
+		
+		ComboBox<String> programBox = new ComboBox<>(program);
+		ComboBox<String> termBox = new ComboBox<>(term);
+		
+		firstNameText.setDescription(descriptionText);
+		lastNameText.setDescription(descriptionText);
+		emailText.setDescription(descriptionText);
+		
+		firstNameText.setWidth("500px");
+		lastNameText.setWidth("500px");
+		emailText.setWidth("500px");
+		phoneText.setWidth("500px");
+		infoText.setWidth("500px");
+		salukiSpamText.setWidth("500px");
+		programBox.setWidth("500px");
+		termBox.setWidth("500px");
+		
+		infoText.setHeight("200px");
+		
+		programBox.setItems(program1, program2);
+		termBox.setItems(term1, term2, term3);
+		
+		programBox.setPopupWidth(program2);
+		termBox.setPopupWidth(term2);
+		
+		programBox.setCaption(programDesc);
+		termBox.setCaption(termDesc);
+		
+		programBox.setEmptySelectionAllowed(false);
+		termBox.setEmptySelectionAllowed(false);
+		
+		programBox.setRequiredIndicatorVisible(true);
+		termBox.setRequiredIndicatorVisible(true);
+		firstNameText.setRequiredIndicatorVisible(true);
+		lastNameText.setRequiredIndicatorVisible(true);
+		emailText.setRequiredIndicatorVisible(true);
+		salukiSpamText.setRequiredIndicatorVisible(true);
+
+		Binder<ContactInfo> binder = new Binder<>();
+		
+		binder.forField(firstNameText)
+		.withValidator(new StringLengthValidator(
+				"Name must have an input",
+				2, 20))
+		.bind(ContactInfo::getFirstName, ContactInfo::setFirstName);
+
+		binder.forField(lastNameText)
+		.withValidator(new StringLengthValidator(
+				"Name must have an input",
+				2, 20))
+		.bind(ContactInfo::getLastName, ContactInfo::setLastName);
+
+		binder.forField(emailText)
+		.withValidator(new EmailValidator(
+				"Your email needs to be in the form of johndoe@example.com"))
+		.bind(ContactInfo::getEmail, ContactInfo::setEmail);
+		
+		binder.forField(phoneText)
+		.withValidator(new RegexpValidator("Invalid Phone Number, needs to be in the form of XXX-XXX-XXXX", "[0-9][0-9][0-9]-[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]"))
+		.bind(ContactInfo::getPhone, ContactInfo::setPhone);
+		
+		binder.forField(salukiSpamText)
+		.withValidator(new RegexpValidator("Needs to exactly match S@luki", "S@luki"))
+		.bind(ContactInfo::getSalukiSpam, ContactInfo::setSalukiSpam);
+		
+		binder.forField(infoText)
+		.bind(ContactInfo::getInfo, ContactInfo::setInfo);
+		
+		ContactInfo p = new ContactInfo();
+		binder.setBean(p);
+
+		Button submit = new Button("Submit",
+				event -> {
+					try {
+						binder.writeBean(p);
+						
+						layout.addComponent(new Label("Thanks " + firstNameText.getValue() 
+						+ ", it works!"));
+						// A real application would also save the updated person
+						// using the application's backend
+					} catch (ValidationException e) {
+						Notification.show("Information could not be saved, " +
+								"please check error messages for each field.");
+					}
+				});
+
+		// Create the clear form Button
+		Button clearForm = new Button("Clear Form");
+		// Create the event listener for the clearForm button
+		clearForm.addClickListener(e -> {
+			firstNameText.setValue("");
+			lastNameText.setValue("");
+			emailText.setValue("");
+			phoneText.setValue("");
+			programBox.setValue(null);
+			termBox.setValue(null);
+		});
+		
+		// Create the Panel (questionsPanel)
+		Panel questionsPanel = new Panel("Have Questions?");
+		// Add the style to the questionsPanel
+		questionsPanel.addStyleName("mypanelexample");
+		// Make the questionsPanel shrink to fit the content that will be added to it
+		questionsPanel.setSizeUndefined();
+		// Add the questionsPanel to the VerticleLayout (layout)
+		layout.addComponent(questionsPanel);
+
+		// Create the FormLayout (formInfo) and add the content
+		FormLayout formInfo = new FormLayout();
+		formInfo.addStyleName("mypanelcontent");
+		formInfo.addComponent(firstNameText);
+		formInfo.addComponent(lastNameText);
+		formInfo.addComponent(emailText);
+		formInfo.addComponent(phoneText);
+		formInfo.addComponent(programBox);
+		formInfo.addComponent(termBox);
+		formInfo.addComponent(infoLabel);
+		formInfo.addComponent(infoText);
+		formInfo.addComponent(salukiSpamText);
+		formInfo.addComponent(clearForm);
+		formInfo.addComponent(submit);
+		formInfo.setSizeUndefined(); // Shrink to fit
+		formInfo.setMargin(true);
+		// Add the FormLayout (formInfo) content to the panel (questionsPanel)
+		questionsPanel.setContent(formInfo);
+
+		// Add the content to the layout
+		layout.addComponents(questionsPanel);
+
+		// Finalizes the layout
+		setContent(layout);
+	}
+
+	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
+	@VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
+	public static class MyUIServlet extends VaadinServlet {
+	}
+}
